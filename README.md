@@ -1,3 +1,16 @@
+
+# NOTE:
+this is a adopted version of C# LibAtem to run inside a Loupedeck Plugin.
+It reuqired to change error handling and more.
+It is not meant to be a gneric C# library for Blackmagic ATEM devices. In case you need LibAtem in riginal please check from https://github.com/LibAtem/Libatem
+
+- [x] Fix Hash calculation for still frame upload which requried dynamic library loading causing security violation
+- [x] Fix Exception handling which causes the log to be flooded in case the ATEM is down (Host Down UDP client Exception)
+- [ ] Fix logging
+
+
+
+
 # LibAtem
 
 This is the library for working with Blackmagic Design ATEM devices.

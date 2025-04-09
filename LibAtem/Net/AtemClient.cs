@@ -160,7 +160,7 @@ namespace LibAtem.Net
             _handleThread.Start();
         }
 
-        private void SendHandshake()
+        private async void SendHandshake()
         {
             // send handshake back
             byte[] handshake =
@@ -174,9 +174,21 @@ namespace LibAtem.Net
                 0x01, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00
             };
 
-            Log.DebugFormat("Starting handshake");
-            _client.SendAsync(handshake, handshake.Length, _remoteEp);
-        }
+
+			try {
+				Log.DebugFormat("Starting handshake");
+
+				// This is the line that may throw when ATEM is offline
+				await _client.SendAsync(handshake, handshake.Length, _remoteEp);
+			} catch (System.Net.Sockets.SocketException ex) {
+				Log.WarnFormat("[LibAtem] Handshake failed (socket): {0}", ex.Message);
+                
+				// Optionally: suppress or track number of retries here
+			} catch (Exception ex) {
+				Log.WarnFormat("[LibAtem] Handshake failed (unexpected): {0}", ex.Message);
+			}
+
+		}
 
         private void StartReceiving()
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Security.Cryptography;
 using LibAtem.Common;
 
@@ -80,10 +81,25 @@ namespace LibAtem.Util.Media
             }
         }
 
-        public byte[] GetHash()
-        {
-            using (MD5 md5Hash = MD5.Create())
-                return md5Hash.ComputeHash(_data);
-        }
-    }
+		/*    public byte[] GetHash()
+			{
+				using (MD5 md5Hash = MD5.Create())
+					return md5Hash.ComputeHash(_data);
+			}
+		*/
+
+		public byte[] GetHash() {
+			// Use a fake, deterministic-ish "hash"
+			// Just take the UTF-8 bytes of the name and timestamp (or random GUID)
+			// the dynamic loading of the original MD5.Create() caused
+			// System.InvalidOperationException: Argument_CustomAssemblyLoadContextRequestedNameMismatch
+            // This Hash is only needed for identifying frames individually
+            // which we fake here a bit ...
+
+			var input = Name + "_" + _data.Length;
+			return System.Text.Encoding.UTF8.GetBytes(input).Take(32).ToArray();
+		}
+
+
+	}
 }
